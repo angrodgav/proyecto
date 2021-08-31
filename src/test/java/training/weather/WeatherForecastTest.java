@@ -8,18 +8,20 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONException;
-import org.junit.Before;
 import org.junit.Test;
 
 public class WeatherForecastTest {
 
-    private WeatherForecast weatherForecast;
+    private WeatherForecast weatherForecast = new WeatherForecast();
 
-    @Before
-    public void setUp() {
-        weatherForecast = new WeatherForecast();
-    }
+    private static final int MILISECONDS_1_HOUR = 1000 * 60 * 60;
+    
+    private static final int HOURS_6_NORMAL_DAYS = 24 * 6;//sin cambio horario
+    
+    private static final int HOURS_2_NORMAL_DAYS = 24 * 2;//sin cambio horario
 
+    private static final String EMPTY_STRING = "";
+    
     @Test
     public void Given_CorrectParameters_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
         String forecast = weatherForecast.getCityWeather("Madrid", new Date());
@@ -51,9 +53,9 @@ public class WeatherForecastTest {
     //TODO 144 hours does not necessarily mean 6 days due to the time change, we must refine more
     @Test
     public void Given_Plus6DaysLater_WhenGetCityWeather_Then_GetEmptyResponse() throws IOException {
-        Date more144HoursLater = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 6));
+        Date more144HoursLater = new Date(new Date().getTime() + (MILISECONDS_1_HOUR * HOURS_6_NORMAL_DAYS));
         String forecast = weatherForecast.getCityWeather("Madrid", more144HoursLater);
-        assertEquals(forecast, "");
+        assertEquals(forecast, EMPTY_STRING);
     }
 
     //TODO 144 hours does not necessarily mean 6 days due to the time change, we must refine more
@@ -67,9 +69,9 @@ public class WeatherForecastTest {
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
 
-        Date less144HoursLaterButPlus6Days = new Date(c.getTime().getTime() + (1000 * 60 * 60 * (24 * 6 - numberHoursLess)));
+        Date less144HoursLaterButPlus6Days = new Date(c.getTime().getTime() + (MILISECONDS_1_HOUR * (HOURS_6_NORMAL_DAYS - numberHoursLess)));
         String forecast = weatherForecast.getCityWeather("Madrid", less144HoursLaterButPlus6Days);
-        assertEquals(forecast, "");
+        assertEquals(forecast, EMPTY_STRING);
     }
 
     //TODO 144 hours does not necessarily mean 6 days due to the time change, we must refine more
@@ -82,15 +84,15 @@ public class WeatherForecastTest {
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
 
-        Date less144HoursLaterAndPlus5Days = new Date(c.getTime().getTime() + (1000 * 60 * 60 * (24 * 6 - numberHoursLess)));
+        Date less144HoursLaterAndPlus5Days = new Date(c.getTime().getTime() + (MILISECONDS_1_HOUR * (HOURS_6_NORMAL_DAYS - numberHoursLess)));
         String forecast = weatherForecast.getCityWeather("Madrid", less144HoursLaterAndPlus5Days);
         assertNotNull(forecast);
     }
 
     @Test
     public void Given_PastDate_WhenGetCityWeather_Then_GetEmptyResponse() throws IOException {
-        Date pastDate = new Date(new Date().getTime() - (1000 * 60 * 60 * 24 * 2));
+        Date pastDate = new Date(new Date().getTime() - (MILISECONDS_1_HOUR * HOURS_2_NORMAL_DAYS));
         String forecast = weatherForecast.getCityWeather("Madrid", pastDate);
-        assertEquals(forecast, "");
+        assertEquals(forecast, EMPTY_STRING);
     }
 }
