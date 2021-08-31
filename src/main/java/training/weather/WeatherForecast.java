@@ -1,7 +1,6 @@
 package training.weather;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -16,12 +15,16 @@ import org.json.JSONObject;
 
 public class WeatherForecast {
 
-    public String getCityWeather(final String city, Date datetime) throws IOException {
+    public String getCityWeather(final String city, final Date datetime) throws IOException {
+        LocalDate day;
+
         if (datetime == null) {
-            datetime = new Date();
+            day = LocalDate.now();
+        } else {
+            day = datetime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         }
 
-        return this.getCityWeather(city, datetime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        return this.getCityWeather(city, day);
     }
 
     private String getCityWeather(final String city, final LocalDate day) throws IOException {
