@@ -5,60 +5,67 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 
 import org.json.JSONException;
 import org.junit.Test;
 
-import training.weather.WeatherForecast;
-
 public class WeatherForecastServiceTest {
-	 
+
     private static final LocalDate PREDICTION_LIMIT = LocalDate.now().plusDays(6);
     private static final LocalDate LAST_DATE = LocalDate.now().minusDays(2);
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalDate YESTERDAY = LocalDate.now().minusDays(1);
+
+    private static final Date YESTERDAY_DATE = new Date(System.currentTimeMillis() - 1000L * 60L * 60L * 24L);
 
     private static final String EMPTY_STRING = "";
-	
+
     private WeatherForecastService weatherForecastService = new WeatherForecastService();
-	
+
     @Test
     public void Given_CorrectParameters_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
-        String forecast = weatherForecastService.getCityWeather("Madrid", new Date());
+        String forecast = weatherForecastService.getCityWeather("Madrid", LocalDate.now());
         assertNotNull(forecast);
     }
 
     @Test(expected = JSONException.class)
     public void Given_NullCity_WhenGetCityWeather_Then_ThrowJSONException() throws IOException {
-    	weatherForecastService.getCityWeather(null, new Date());
-    }
-
-    @Test
-    public void Given_NullDate_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
-        String forecast = weatherForecastService.getCityWeather("Madrid", null);
-        assertNotNull(forecast);
+        weatherForecastService.getCityWeather(null, LocalDate.now());
     }
 
     @Test(expected = JSONException.class)
     public void Given_WrongCity_WhenGetCityWeather_Then_ThrowJSONException() throws IOException {
-    	weatherForecastService.getCityWeather("Madrida", new Date());
+        weatherForecastService.getCityWeather("Madrida", LocalDate.now());
     }
 
     @Test
     public void Given_PartOfCorrectCityName_WhenGetCityWeather_Then_GetCorrectWeatherStatesOfARamdomCityOfQuery() throws IOException {
-        String forecast = weatherForecastService.getCityWeather("san", new Date());
+        String forecast = weatherForecastService.getCityWeather("san", LocalDate.now());
         assertNotNull(forecast);
     }
 
     @Test
     public void Given_Plus6DaysLater_WhenGetCityWeather_Then_GetEmptyResponse() throws IOException {
-        String forecast = weatherForecastService.getCityWeather("Madrid", Date.from(PREDICTION_LIMIT.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        assertEquals(forecast, EMPTY_STRING);
+        String forecast = weatherForecastService.getCityWeather("Madrid", PREDICTION_LIMIT);
+        assertEquals(EMPTY_STRING, forecast);
     }
 
     @Test
     public void Given_PastDate_WhenGetCityWeather_Then_GetEmptyResponse() throws IOException {
-        String forecast = weatherForecastService.getCityWeather("Madrid", Date.from(LAST_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        assertEquals(forecast, EMPTY_STRING);
+        String forecast = weatherForecastService.getCityWeather("Madrid", LAST_DATE);
+        assertEquals(EMPTY_STRING, forecast);
+    }
+
+    @Test
+    public void Given_NullDate_WhenConvertDateToLocalDateNullSafe_Then_GetTodayResponse() throws IOException {
+        LocalDate day = weatherForecastService.convertDateToLocalDateNullSafe(null);
+        assertEquals(TODAY, day);
+    }
+
+    @Test
+    public void Given_AnyDate_WhenConvertDateToLocalDateNullSafe_Then_GetConvertLocalDateResponse() throws IOException {
+        LocalDate day = weatherForecastService.convertDateToLocalDateNullSafe(YESTERDAY_DATE);
+        assertEquals(YESTERDAY, day);
     }
 }
