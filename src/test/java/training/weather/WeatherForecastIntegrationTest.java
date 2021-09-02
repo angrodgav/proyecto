@@ -11,6 +11,8 @@ import java.util.Date;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
+import training.weather.service.ConvertLocalDateService;
+import training.weather.service.IConvertLocalDateService;
 import training.weather.service.IWeatherForecastService;
 import training.weather.service.WeatherForecastService;
 
@@ -28,10 +30,14 @@ public class WeatherForecastIntegrationTest {
 
     private IWeatherForecastService weatherForecastService;
 
+    private IConvertLocalDateService convertLocalDateService;
+    
     @Before
     public void setUp() {
         weatherForecastService = new WeatherForecastService();
-    	weatherForecast.setWeatherForecastService(weatherForecastService);
+        convertLocalDateService = new ConvertLocalDateService();
+        weatherForecast.setWeatherForecastService(weatherForecastService);
+        weatherForecast.setConvertLocalDateService(convertLocalDateService);
     }
 
     @Test

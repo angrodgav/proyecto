@@ -2,17 +2,16 @@ package training.weather.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.stereotype.Service;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.stereotype.Service;
 
 
 @Service
@@ -39,18 +38,5 @@ public class WeatherForecastService implements IWeatherForecastService {
         }
         return "";
     }
-
-    @Override
-    public LocalDate convertDateToLocalDateNullSafe(final Date date) {
-        LocalDate day;
-
-        if (date == null) {
-            day = LocalDate.now();
-        } else {
-            day = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-
-        return day;
-    }
-
+    
 }

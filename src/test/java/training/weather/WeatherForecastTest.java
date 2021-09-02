@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import training.weather.service.IConvertLocalDateService;
 import training.weather.service.IWeatherForecastService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,13 +43,16 @@ public class WeatherForecastTest {
     @Mock
     private IWeatherForecastService weatherForecastService;
 
+    @Mock
+    private IConvertLocalDateService convertLocalDateService;
+
     @Before
     public void setUp() throws IOException {
 
-        when(weatherForecastService.convertDateToLocalDateNullSafe(null)).thenReturn(TODAY);
-        when(weatherForecastService.convertDateToLocalDateNullSafe(TODAY_DATE)).thenReturn(TODAY);
-        when(weatherForecastService.convertDateToLocalDateNullSafe(PREDICTION_LIMIT_DATE)).thenReturn(PREDICTION_LIMIT);
-        when(weatherForecastService.convertDateToLocalDateNullSafe(LAST_DATE_DATE)).thenReturn(LAST_DATE);
+        when(convertLocalDateService.convertDateToLocalDateNullSafe(null)).thenReturn(TODAY);
+        when(convertLocalDateService.convertDateToLocalDateNullSafe(TODAY_DATE)).thenReturn(TODAY);
+        when(convertLocalDateService.convertDateToLocalDateNullSafe(PREDICTION_LIMIT_DATE)).thenReturn(PREDICTION_LIMIT);
+        when(convertLocalDateService.convertDateToLocalDateNullSafe(LAST_DATE_DATE)).thenReturn(LAST_DATE);
 
         when(weatherForecastService.getCityWeather("Madrid", TODAY)).thenReturn(STATE_CLEAR);
         when(weatherForecastService.getCityWeather(null, TODAY)).thenThrow(ERROR_SERVICIO);
