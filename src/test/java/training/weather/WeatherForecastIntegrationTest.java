@@ -11,11 +11,21 @@ import java.util.Date;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
 import training.weather.service.ConvertLocalDateService;
 import training.weather.service.IConvertLocalDateService;
 import training.weather.service.IWeatherForecastService;
+import training.weather.service.SourceWeather;
 import training.weather.service.WeatherForecastService;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { WeatherForecast.class,ConvertLocalDateService.class,WeatherForecastService.class, SourceWeather.class, RestTemplate.class })
 public class WeatherForecastIntegrationTest {
 
     private static final LocalDate PREDICTION_LIMIT = LocalDate.now().plusDays(6);
@@ -26,28 +36,17 @@ public class WeatherForecastIntegrationTest {
 
     private static final String EMPTY_STRING = "";
 
-    private WeatherForecast weatherForecast = new WeatherForecast();
-
-    private IWeatherForecastService weatherForecastService;
-
-    private IConvertLocalDateService convertLocalDateService;
+    @Autowired
+    private WeatherForecast weatherForecast;
     
-    @Before
-    public void setUp() {
-        weatherForecastService = new WeatherForecastService();
-        convertLocalDateService = new ConvertLocalDateService();
-        weatherForecast.setWeatherForecastService(weatherForecastService);
-        weatherForecast.setConvertLocalDateService(convertLocalDateService);
-    }
-
     @Test
     public void Given_CorrectParameters_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
         String forecast = weatherForecast.getCityWeather("Madrid", TODAY_DATE);
         assertNotNull(forecast);
     }
 
-    @Test(expected = JSONException.class)
-    public void Given_NullCity_WhenGetCityWeather_Then_ThrowJSONException() throws IOException {
+    @Test(expected = HttpClientErrorException.class)
+    public void Given_NullCity_WhenGetCityWeather_Then_ThrowHttpClientErrorException() throws IOException {
         weatherForecast.getCityWeather(null, TODAY_DATE);
     }
 
@@ -57,9 +56,10 @@ public class WeatherForecastIntegrationTest {
         assertNotNull(forecast);
     }
 
-    @Test(expected = JSONException.class)
-    public void Given_WrongCity_WhenGetCityWeather_Then_ThrowJSONException() throws IOException {
-        weatherForecast.getCityWeather("Madrida", TODAY_DATE);
+    @Test
+    public void Given_WrongCity_WhenGetCityWeather_Then_GetEmptyResponse() throws IOException {
+    	String forecast = weatherForecast.getCityWeather("Madrida", TODAY_DATE);
+        assertEquals(EMPTY_STRING, forecast);
     }
 
     @Test

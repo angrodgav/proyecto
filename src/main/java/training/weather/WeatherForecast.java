@@ -28,7 +28,7 @@ public class WeatherForecast {
     }
 
     @Autowired
-    public void setWeatherForecastService(final IWeatherForecastService weatherForecastService) {
+    public void setWeatherForecastService(IWeatherForecastService weatherForecastService) {
         this.weatherForecastService = weatherForecastService;
     }
 

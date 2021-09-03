@@ -2,6 +2,7 @@ package training.weather.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -28,10 +29,10 @@ import training.weather.dto.WeatherForecastResponse;
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherForecastServiceTest {
 
-    private static final LocalDate PREDICTION_LIMIT = LocalDate.now().plusDays(6);
-    private static final LocalDate LAST_DATE = LocalDate.now().minusDays(2);
-
-    private static final LocalDate TODAY = LocalDate.now();
+	private static final LocalDate TODAY = LocalDate.now();
+	 
+    private static final LocalDate PREDICTION_LIMIT = TODAY.plusDays(6);
+    private static final LocalDate LAST_DATE = TODAY.minusDays(2);
     
     private static final String EMPTY_STRING = "";
 
@@ -42,6 +43,9 @@ public class WeatherForecastServiceTest {
 
     @Mock
     private ISourceWeather sourceWeather;
+    
+    @Mock
+    private IConvertLocalDateService convertLocalDateService;
     
     @Before
     public void setUp() throws IOException {
@@ -99,28 +103,31 @@ public class WeatherForecastServiceTest {
     	when(sourceWeather.getWeatherForecast(2487956L)).thenReturn(weatherForecastResponseSan1Today);
     	when(sourceWeather.getWeatherForecast(2487889L)).thenReturn(weatherForecastResponseSan2Today);
     	when(sourceWeather.getWeatherForecast(2488042L)).thenReturn(weatherForecastResponseSan3Today);
+    	
+    	when(convertLocalDateService.sameDay(TODAY, TODAY.format(DateTimeFormatter.ofPattern(DATE_FORMAT)))).thenReturn(Boolean.TRUE);
     }
     
     
     @Test
     public void Given_CorrectParameters_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
-        String forecast = weatherForecastService.getCityWeather("Madrid", LocalDate.now());
+        String forecast = weatherForecastService.getCityWeather("Madrid", TODAY);
         assertNotNull(forecast);
     }
 
     @Test(expected = HttpClientErrorException.class)
     public void Given_NullCity_WhenGetCityWeather_Then_ThrowJSONException() throws IOException {
-        weatherForecastService.getCityWeather(null, LocalDate.now());
+        weatherForecastService.getCityWeather(null, TODAY);
     }
 
-    @Test(expected = JSONException.class)
+    @Test
     public void Given_WrongCity_WhenGetCityWeather_Then_ThrowJSONException() throws IOException {
-        weatherForecastService.getCityWeather("Madrida", LocalDate.now());
+    	String forecast = weatherForecastService.getCityWeather("Madrida", TODAY);
+        assertEquals(EMPTY_STRING, forecast);
     }
 
     @Test
     public void Given_PartOfCorrectCityName_WhenGetCityWeather_Then_GetCorrectWeatherStatesOfARamdomCityOfQuery() throws IOException {
-        String forecast = weatherForecastService.getCityWeather("san", LocalDate.now());
+        String forecast = weatherForecastService.getCityWeather("san", TODAY);
         assertNotNull(forecast);
     }
 

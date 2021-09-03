@@ -110,7 +110,7 @@ public class SourceWeatherTest {
     
     @Test
     public void Given_CorrectParameter_WhenWeatherForecast_Then_CorrectWeatherForecastResponse() {
-        final WeatherForecastResponse weatherForecastResponse = sourceWeather.getWeatherForecast(2487956L);
+        final WeatherForecastResponse weatherForecastResponse = sourceWeather.getWeatherForecast(766273L);
         assertNotNull(weatherForecastResponse.getConsolidated_weather());
     }
 
