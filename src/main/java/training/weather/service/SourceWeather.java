@@ -12,6 +12,7 @@ import training.weather.dto.WeatherForecastResponse;
 
 public class SourceWeather implements ISourceWeather {
 
+	//TODO set this url in properties
     private static final String URI_QUERY_PLACES = "https://www.metaweather.com/api/location/search/?query={query}";
     private static final String URI_WEATHER_FORECAST = "https://www.metaweather.com/api/location/{woe}";
 
