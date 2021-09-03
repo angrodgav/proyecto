@@ -2,13 +2,11 @@ package training.weather.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import training.weather.dto.QueryResponse;
 import training.weather.dto.WeatherForecastDayDto;
-import training.weather.dto.WeatherForecastResponse;
 
 
 @Service
@@ -23,18 +21,31 @@ public class WeatherForecastService implements IWeatherForecastService {
     @Override
     public String getCityWeather(final String city, final LocalDate day) throws IOException {
         if (day.isBefore(LocalDate.now().plusDays(6))) {
-            List<QueryResponse> querysResponse = sourceWeather.getPlaces(city);
-            Long woe = querysResponse.stream().map(QueryResponse::getWoeid).findFirst().orElse(null);
-            if (woe != null) {
-                WeatherForecastResponse weatherForecastResponse = sourceWeather.getWeatherForecast(woe);
-                return weatherForecastResponse
-                        .getConsolidated_weather()
-                        .stream()
-                        .filter(ele -> convertLocalDateService.sameDay(day, ele.getApplicable_date()))
-                        .map(WeatherForecastDayDto::getWeather_state_name)
-                        .findFirst()
-                        .orElse(EMPTY_STRING);
-            }
+            Long woe = getWoeForQuery(city);
+            return getWeatherForecastFromWoe(woe, day);
+        }
+        return EMPTY_STRING;
+    }
+
+    private Long getWoeForQuery(final String query) {
+        return sourceWeather
+                .getPlaces(query)
+                .stream()
+                .map(QueryResponse::getWoeid)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String getWeatherForecastFromWoe(final Long woe, final LocalDate day) {
+        if (woe != null) {
+            return sourceWeather
+                    .getWeatherForecast(woe)
+                    .getConsolidated_weather()
+                    .stream()
+                    .filter(ele -> convertLocalDateService.sameDay(day, ele.getApplicable_date()))
+                    .map(WeatherForecastDayDto::getWeather_state_name)
+                    .findFirst()
+                    .orElse(EMPTY_STRING);
         }
         return EMPTY_STRING;
     }

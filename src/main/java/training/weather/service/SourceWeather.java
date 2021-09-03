@@ -12,18 +12,21 @@ import training.weather.dto.WeatherForecastResponse;
 
 public class SourceWeather implements ISourceWeather {
 
+    private static final String URI_QUERY_PLACES = "https://www.metaweather.com/api/location/search/?query={query}";
+    private static final String URI_WEATHER_FORECAST = "https://www.metaweather.com/api/location/{woe}";
+
     private RestTemplate restTemplate;
 
     @Override
     public List<QueryResponse> getPlaces(final String query) {
-        ResponseEntity<QueryResponse[]> responseEntity = restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class, query);
+        ResponseEntity<QueryResponse[]> responseEntity = restTemplate.getForEntity(URI_QUERY_PLACES, QueryResponse[].class, query);
         QueryResponse[] queryResponseArray = responseEntity.getBody();
         return Arrays.stream(queryResponseArray).collect(Collectors.toList());
     }
 
     @Override
     public WeatherForecastResponse getWeatherForecast(final Long woe) {
-        return restTemplate.getForEntity("https://www.metaweather.com/api/location/{woe}", WeatherForecastResponse.class, woe).getBody();
+        return restTemplate.getForEntity(URI_WEATHER_FORECAST, WeatherForecastResponse.class, woe).getBody();
     }
 
     @Autowired

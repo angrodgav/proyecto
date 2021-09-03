@@ -8,8 +8,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import org.json.JSONException;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
+import training.weather.dto.enums.WeatherState;
 import training.weather.service.ConvertLocalDateService;
-import training.weather.service.IConvertLocalDateService;
-import training.weather.service.IWeatherForecastService;
 import training.weather.service.SourceWeather;
 import training.weather.service.WeatherForecastService;
 
@@ -42,7 +38,7 @@ public class WeatherForecastIntegrationTest {
     @Test
     public void Given_CorrectParameters_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
         String forecast = weatherForecast.getCityWeather("Madrid", TODAY_DATE);
-        assertNotNull(forecast);
+        assertNotNull(checkCorrectWeatherState(forecast));
     }
 
     @Test(expected = HttpClientErrorException.class)
@@ -53,7 +49,7 @@ public class WeatherForecastIntegrationTest {
     @Test
     public void Given_NullDate_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
         String forecast = weatherForecast.getCityWeather("Madrid", null);
-        assertNotNull(forecast);
+        assertNotNull(checkCorrectWeatherState(forecast));
     }
 
     @Test
@@ -65,7 +61,7 @@ public class WeatherForecastIntegrationTest {
     @Test
     public void Given_PartOfCorrectCityName_WhenGetCityWeather_Then_GetCorrectWeatherStatesOfARamdomCityOfQuery() throws IOException {
         String forecast = weatherForecast.getCityWeather("san", TODAY_DATE);
-        assertNotNull(forecast);
+        assertNotNull(checkCorrectWeatherState(forecast));
     }
 
     @Test
@@ -78,5 +74,9 @@ public class WeatherForecastIntegrationTest {
     public void Given_PastDate_WhenGetCityWeather_Then_GetEmptyResponse() throws IOException {
         String forecast = weatherForecast.getCityWeather("Madrid", PREDICTION_LIMIT_DATE);
         assertEquals(EMPTY_STRING, forecast);
+    }
+
+    private WeatherState checkCorrectWeatherState(final String forecast) {
+        return WeatherState.getWeatherStateFromName(forecast);
     }
 }

@@ -19,10 +19,6 @@ public class WeatherForecast {
     public String getCityWeather(final String city, final Date datetime) throws IOException {
         LocalDate day = convertLocalDateService.convertDateToLocalDateNullSafe(datetime);
 
-        return this.getCityWeather(city, day);
-    }
-
-    private String getCityWeather(final String city, final LocalDate day) throws IOException {
         return weatherForecastService.getCityWeather(city, day);
     }
 

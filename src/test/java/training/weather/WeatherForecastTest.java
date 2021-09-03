@@ -9,13 +9,14 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import training.weather.service.IConvertLocalDateService;
 import training.weather.service.IWeatherForecastService;
 
@@ -33,10 +34,9 @@ public class WeatherForecastTest {
 
     private static final String STATE_CLEAR = "Clear";
 
-    private static final String JSON_EXCEPTION_MENSAJE = "Error";
+    private static final String HTTP_EXCEPTION_MENSAJE = "Error";
 
-    private static final JSONException ERROR_SERVICIO = new JSONException(JSON_EXCEPTION_MENSAJE);
-
+    private static final HttpClientErrorException ERROR_HTTP_CLIENT = new HttpClientErrorException(HttpStatus.NOT_FOUND, HTTP_EXCEPTION_MENSAJE);
     @InjectMocks
     private WeatherForecast weatherForecast = new WeatherForecast();
 
@@ -55,8 +55,8 @@ public class WeatherForecastTest {
         when(convertLocalDateService.convertDateToLocalDateNullSafe(LAST_DATE_DATE)).thenReturn(LAST_DATE);
 
         when(weatherForecastService.getCityWeather("Madrid", TODAY)).thenReturn(STATE_CLEAR);
-        when(weatherForecastService.getCityWeather(null, TODAY)).thenThrow(ERROR_SERVICIO);
-        when(weatherForecastService.getCityWeather("Madrida", TODAY)).thenThrow(ERROR_SERVICIO);
+        when(weatherForecastService.getCityWeather(null, TODAY)).thenThrow(ERROR_HTTP_CLIENT);
+        when(weatherForecastService.getCityWeather("Madrida", TODAY)).thenThrow(ERROR_HTTP_CLIENT);
         when(weatherForecastService.getCityWeather("san", TODAY)).thenReturn(STATE_CLEAR);
         when(weatherForecastService.getCityWeather("Madrid", PREDICTION_LIMIT)).thenReturn(EMPTY_STRING);
         when(weatherForecastService.getCityWeather("Madrid", LAST_DATE)).thenReturn(EMPTY_STRING);
@@ -68,7 +68,7 @@ public class WeatherForecastTest {
         assertNotNull(forecast);
     }
 
-    @Test(expected = JSONException.class)
+    @Test(expected = HttpClientErrorException.class)
     public void Given_NullCity_WhenGetCityWeather_Then_ThrowJSONException() throws IOException {
         weatherForecast.getCityWeather(null, TODAY_DATE);
     }
@@ -79,7 +79,7 @@ public class WeatherForecastTest {
         assertNotNull(forecast);
     }
 
-    @Test(expected = JSONException.class)
+    @Test(expected = HttpClientErrorException.class)
     public void Given_WrongCity_WhenGetCityWeather_Then_ThrowJSONException() throws IOException {
         weatherForecast.getCityWeather("Madrida", TODAY_DATE);
     }
