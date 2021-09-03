@@ -1,6 +1,5 @@
 package training.weather.service;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -20,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
 import training.weather.dto.QueryResponse;
 import training.weather.dto.WeatherForecastResponse;
 
@@ -36,46 +34,45 @@ public class SourceWeatherTest {
     @Before
     public void setUp() throws IOException {
 
-    	QueryResponse madridResponse = new QueryResponse();
-    	madridResponse.setTitle("Madrid");
-    	madridResponse.setWoeid(766273L);
-    	QueryResponse[] querysResponseMadrid = {madridResponse};
+        QueryResponse madridResponse = new QueryResponse();
+        madridResponse.setTitle("Madrid");
+        madridResponse.setWoeid(766273L);
+        QueryResponse[] querysResponseMadrid = {madridResponse};
 
-    	when(
-    	restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class, "Madrid")).thenReturn(new ResponseEntity<QueryResponse[]>(querysResponseMadrid, HttpStatus.OK));
+        when(
+        restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class, "Madrid")).thenReturn(new ResponseEntity<QueryResponse[]>(querysResponseMadrid, HttpStatus.OK));
 
-    	QueryResponse san1Response = new QueryResponse();
-    	san1Response.setTitle("San Francisco");
-    	san1Response.setWoeid(2487956L);
+        QueryResponse san1Response = new QueryResponse();
+        san1Response.setTitle("San Francisco");
+        san1Response.setWoeid(2487956L);
 
-    	QueryResponse san2Response = new QueryResponse();
-    	san2Response.setTitle("San Diego");
-    	san2Response.setWoeid(2487889L);
+        QueryResponse san2Response = new QueryResponse();
+        san2Response.setTitle("San Diego");
+        san2Response.setWoeid(2487889L);
 
-    	QueryResponse san3Response = new QueryResponse();
-    	san3Response.setTitle("San Jose");
-    	san3Response.setWoeid(2488042L);
-    	QueryResponse[] querysResponseSan = {san1Response, san2Response, san3Response};
+        QueryResponse san3Response = new QueryResponse();
+        san3Response.setTitle("San Jose");
+        san3Response.setWoeid(2488042L);
+        QueryResponse[] querysResponseSan = {san1Response, san2Response, san3Response};
 
-    	when(
-    	restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class,"san")).thenReturn(new ResponseEntity<QueryResponse[]>(querysResponseSan, HttpStatus.OK));
+        when(
+        restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class, "san")).thenReturn(new ResponseEntity<QueryResponse[]>(querysResponseSan, HttpStatus.OK));
 
-    	QueryResponse[] querysResponseMadrida = {};
-    	when(
-    	restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class,"Madrida")).thenReturn( new ResponseEntity<QueryResponse[]>(querysResponseMadrida, HttpStatus.OK));
+        QueryResponse[] querysResponseMadrida = {};
+        when(
+        restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class, "Madrida")).thenReturn(new ResponseEntity<QueryResponse[]>(querysResponseMadrida, HttpStatus.OK));
 
-    	when(
-    	restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class,(String)null)).thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN, "HttpClientErrorException"));
+        when(
+        restTemplate.getForEntity("https://www.metaweather.com/api/location/search/?query={query}", QueryResponse[].class, (String) null)).thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN, "HttpClientErrorException"));
 
+        WeatherForecastResponse weatherForecastResponse = new WeatherForecastResponse();
+        weatherForecastResponse.setConsolidated_weather(new ArrayList<>());
 
-    	WeatherForecastResponse weatherForecastResponse = new WeatherForecastResponse();
-    	weatherForecastResponse.setConsolidated_weather(new ArrayList<>());
+        when(
+        restTemplate.getForEntity("https://www.metaweather.com/api/location/{woe}", WeatherForecastResponse.class, 766273L)).thenReturn(new ResponseEntity<WeatherForecastResponse>(weatherForecastResponse, HttpStatus.OK));
 
-    	when(
-    	restTemplate.getForEntity("https://www.metaweather.com/api/location/{woe}", WeatherForecastResponse.class, 766273L)).thenReturn(new ResponseEntity<WeatherForecastResponse>(weatherForecastResponse, HttpStatus.OK));
-
-    	when(
-    	restTemplate.getForEntity("https://www.metaweather.com/api/location/{woe}", WeatherForecastResponse.class, 12L)).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND, "HttpClientErrorException"));
+        when(
+        restTemplate.getForEntity("https://www.metaweather.com/api/location/{woe}", WeatherForecastResponse.class, 12L)).thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND, "HttpClientErrorException"));
 
     }
 

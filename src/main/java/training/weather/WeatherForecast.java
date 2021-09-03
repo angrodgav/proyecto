@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
 import training.weather.service.IConvertLocalDateService;
 import training.weather.service.IWeatherForecastService;
 
@@ -28,13 +27,13 @@ public class WeatherForecast {
     }
 
     @Autowired
-    public void setWeatherForecastService(IWeatherForecastService weatherForecastService) {
+    public void setWeatherForecastService(final IWeatherForecastService weatherForecastService) {
         this.weatherForecastService = weatherForecastService;
     }
 
     @Autowired
-	public void setConvertLocalDateService(IConvertLocalDateService convertLocalDateService) {
-		this.convertLocalDateService = convertLocalDateService;
-	}
-    
+    public void setConvertLocalDateService(final IConvertLocalDateService convertLocalDateService) {
+        this.convertLocalDateService = convertLocalDateService;
+    }
+
 }

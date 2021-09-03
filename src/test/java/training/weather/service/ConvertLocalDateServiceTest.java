@@ -19,7 +19,7 @@ public class ConvertLocalDateServiceTest {
     private static final LocalDate YESTERDAY = LocalDate.now().minusDays(1);
     private static final Date YESTERDAY_DATE = new Date(System.currentTimeMillis() - 1000L * 60L * 60L * 24L);
     private static final String DATE_FORMAT = "yyyy-MM-dd";
-    
+
     private ConvertLocalDateService convertLocalDateService = new ConvertLocalDateService();
 
     @Test
@@ -36,14 +36,14 @@ public class ConvertLocalDateServiceTest {
 
     @Test
     public void Given_NullLocalDate_WhenSameDay_Then_ReturnFalse() throws IOException {
-    	assertFalse(convertLocalDateService.sameDay(null, "2021-09-02"));
+        assertFalse(convertLocalDateService.sameDay(null, "2021-09-02"));
     }
 
     @Test
     public void Given_NullStringDate_WhenSameDay_Then_ReturnFalse() throws IOException {
     	assertFalse(convertLocalDateService.sameDay(TODAY, null));
     }
-    
+
     @Test
     public void Given_MatchingParameters_WhenSameDay_Then_ReturnTrue() throws IOException {
     	assertTrue(convertLocalDateService.sameDay(TODAY, TODAY.format(DateTimeFormatter.ofPattern(DATE_FORMAT))));

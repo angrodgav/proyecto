@@ -65,6 +65,6 @@ public class SourceWeatherIntegrationTest {
 
     @Test(expected = HttpClientErrorException.class)
     public void Given_InCorrectParameter_WhenWeatherForecast_Then_ThrowHttpClientErrorException() {
-    	sourceWeather.getWeatherForecast(12L);
+        sourceWeather.getWeatherForecast(12L);
     }
 }

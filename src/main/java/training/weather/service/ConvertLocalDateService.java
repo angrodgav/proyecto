@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ConvertLocalDateService implements IConvertLocalDateService {
 
-	public static final String DATE_FORMAT = "yyyy-MM-dd";
-	
-	@Override
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+
+    @Override
     public LocalDate convertDateToLocalDateNullSafe(final Date date) {
         LocalDate day;
 
@@ -25,13 +25,13 @@ public class ConvertLocalDateService implements IConvertLocalDateService {
         return day;
     }
 
-	@Override
-	public boolean sameDay(LocalDate day, String dayString) {
-		if(day == null ||dayString == null) {
-			return false;
-		}
-		
-		return day.equals(LocalDate.parse(dayString, DateTimeFormatter.ofPattern(ConvertLocalDateService.DATE_FORMAT)));
-	}
+    @Override
+    public boolean sameDay(final LocalDate day, final String dayString) {
+        if (day == null || dayString == null) {
+            return false;
+        }
+
+        return day.equals(LocalDate.parse(dayString, DateTimeFormatter.ofPattern(ConvertLocalDateService.DATE_FORMAT)));
+    }
 
 }

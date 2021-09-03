@@ -2,7 +2,6 @@ package training.weather.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -11,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
-
 import training.weather.dto.QueryResponse;
 import training.weather.dto.WeatherForecastDayDto;
 import training.weather.dto.WeatherForecastResponse;
@@ -29,24 +25,24 @@ import training.weather.dto.WeatherForecastResponse;
 @RunWith(MockitoJUnitRunner.class)
 public class WeatherForecastServiceTest {
 
-	private static final LocalDate TODAY = LocalDate.now();
-	 
+    private static final LocalDate TODAY = LocalDate.now();
+
     private static final LocalDate PREDICTION_LIMIT = TODAY.plusDays(6);
     private static final LocalDate LAST_DATE = TODAY.minusDays(2);
-    
+
     private static final String EMPTY_STRING = "";
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
-    
+
     @InjectMocks
     private WeatherForecastService weatherForecastService = new WeatherForecastService();
 
     @Mock
     private ISourceWeather sourceWeather;
-    
+
     @Mock
     private IConvertLocalDateService convertLocalDateService;
-    
+
     @Before
     public void setUp() throws IOException {
 
@@ -56,8 +52,7 @@ public class WeatherForecastServiceTest {
     	madridResponse.setWoeid(766273L);
 
     	querysResponseMadrid.add(madridResponse);
-    	
-    	
+
     	List<QueryResponse> querysResponseSan = new ArrayList<QueryResponse>();
 
     	QueryResponse san1Response = new QueryResponse();
@@ -74,7 +69,7 @@ public class WeatherForecastServiceTest {
     	querysResponseSan.add(san1Response);
     	querysResponseSan.add(san2Response);
     	querysResponseSan.add(san3Response);
-    	
+
     	when(sourceWeather.getPlaces("Madrid")).thenReturn(querysResponseMadrid);
     	when(sourceWeather.getPlaces("san")).thenReturn(querysResponseMadrid);
     	when(sourceWeather.getPlaces(null)).thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN, "HttpClientErrorException"));
@@ -82,32 +77,31 @@ public class WeatherForecastServiceTest {
 
     	WeatherForecastResponse weatherForecastResponseMadridToday = new WeatherForecastResponse();
     	List<WeatherForecastDayDto> weatherForecastDaysDto = new ArrayList<>();
-    	
+
     	WeatherForecastDayDto weatherForecastDayDto = new WeatherForecastDayDto();
     	weatherForecastDayDto.setWeather_state_name("Clear");
     	weatherForecastDayDto.setApplicable_date(TODAY.format(DateTimeFormatter.ofPattern(DATE_FORMAT)));
-    	
+
     	weatherForecastDaysDto.add(weatherForecastDayDto);
     	weatherForecastResponseMadridToday.setConsolidated_weather(weatherForecastDaysDto);
-    	
+
     	WeatherForecastResponse weatherForecastResponseSan1Today = new WeatherForecastResponse();
     	weatherForecastResponseSan1Today.setConsolidated_weather(weatherForecastDaysDto);
-    	
+
     	WeatherForecastResponse weatherForecastResponseSan2Today = new WeatherForecastResponse();
     	weatherForecastResponseSan2Today.setConsolidated_weather(weatherForecastDaysDto);
-    	
+
     	WeatherForecastResponse weatherForecastResponseSan3Today = new WeatherForecastResponse();
     	weatherForecastResponseSan3Today.setConsolidated_weather(weatherForecastDaysDto);
-    	
+
     	when(sourceWeather.getWeatherForecast(766273L)).thenReturn(weatherForecastResponseMadridToday);
     	when(sourceWeather.getWeatherForecast(2487956L)).thenReturn(weatherForecastResponseSan1Today);
     	when(sourceWeather.getWeatherForecast(2487889L)).thenReturn(weatherForecastResponseSan2Today);
     	when(sourceWeather.getWeatherForecast(2488042L)).thenReturn(weatherForecastResponseSan3Today);
-    	
+
     	when(convertLocalDateService.sameDay(TODAY, TODAY.format(DateTimeFormatter.ofPattern(DATE_FORMAT)))).thenReturn(Boolean.TRUE);
     }
-    
-    
+
     @Test
     public void Given_CorrectParameters_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
         String forecast = weatherForecastService.getCityWeather("Madrid", TODAY);

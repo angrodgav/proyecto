@@ -25,7 +25,7 @@ import training.weather.service.SourceWeather;
 import training.weather.service.WeatherForecastService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { WeatherForecast.class,ConvertLocalDateService.class,WeatherForecastService.class, SourceWeather.class, RestTemplate.class })
+@ContextConfiguration(classes = { WeatherForecast.class, ConvertLocalDateService.class, WeatherForecastService.class, SourceWeather.class, RestTemplate.class })
 public class WeatherForecastIntegrationTest {
 
     private static final LocalDate PREDICTION_LIMIT = LocalDate.now().plusDays(6);
@@ -38,7 +38,7 @@ public class WeatherForecastIntegrationTest {
 
     @Autowired
     private WeatherForecast weatherForecast;
-    
+
     @Test
     public void Given_CorrectParameters_WhenGetCityWeather_Then_GetCorrectWeatherStates() throws IOException {
         String forecast = weatherForecast.getCityWeather("Madrid", TODAY_DATE);
@@ -58,7 +58,7 @@ public class WeatherForecastIntegrationTest {
 
     @Test
     public void Given_WrongCity_WhenGetCityWeather_Then_GetEmptyResponse() throws IOException {
-    	String forecast = weatherForecast.getCityWeather("Madrida", TODAY_DATE);
+        String forecast = weatherForecast.getCityWeather("Madrida", TODAY_DATE);
         assertEquals(EMPTY_STRING, forecast);
     }
 
