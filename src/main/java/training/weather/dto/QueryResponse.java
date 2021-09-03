@@ -3,7 +3,7 @@ package training.weather.dto;
 public class QueryResponse {
 
     private String title;
-    private Integer woeid;
+    private Long woeid;
 
     public String getTitle() {
         return title;
@@ -11,10 +11,10 @@ public class QueryResponse {
     public void setTitle(final String title) {
         this.title = title;
     }
-    public Integer getWoeid() {
+    public Long getWoeid() {
         return woeid;
     }
-    public void setWoeid(final Integer woeid) {
+    public void setWoeid(final Long woeid) {
         this.woeid = woeid;
     }
 }
